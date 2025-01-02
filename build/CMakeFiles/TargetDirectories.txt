@@ -1,7 +1,0 @@
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/yeastcppwpilibodometryprovider.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/edit_cache.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/rebuild_cache.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/list_install_components.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/install.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/install/local.dir
-/mnt/working/third_party_libs/yeastcppwpilibodometryprovider/build/CMakeFiles/install/strip.dir
