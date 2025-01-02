@@ -1,6 +1,6 @@
 #include <exception>
 
-#include "yeastcppwpilibodometryprovider/wpilibodometryprovider.hpp"
+#include "yeastcpppathplannertrajectoryfollower/pathplannertrajectoryfollower.hpp"
 
 #include "frc/estimator/SwerveDrivePoseEstimator.h"
 #include "frc/kinematics/SwerveDriveKinematics.h"

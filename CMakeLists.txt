@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(yeastcppwpilibodometryprovider)
+project(yeastcpppathplannertrajectoryfollower)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -17,14 +17,14 @@ file(GLOB_RECURSE HEADERS
 )
 
 # Add the library source files
-add_library(yeastcppwpilibodometryprovider 
+add_library(yeastcpppathplannertrajectoryfollower 
     ${SOURCES}
 )
 
 find_package(Eigen3 REQUIRED)
 
 # Specify include directories for the library (if needed)
-target_include_directories(yeastcppwpilibodometryprovider PUBLIC
+target_include_directories(yeastcpppathplannertrajectoryfollower PUBLIC
     include
     /usr/local/include/eigen3
     /usr/local/include/wpiutil
@@ -33,7 +33,7 @@ target_include_directories(yeastcppwpilibodometryprovider PUBLIC
 )
 
 # Install the library and header files
-install(TARGETS yeastcppwpilibodometryprovider DESTINATION lib)
+install(TARGETS yeastcpppathplannertrajectoryfollower DESTINATION lib)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" # source directory
         DESTINATION "include" # target directory
