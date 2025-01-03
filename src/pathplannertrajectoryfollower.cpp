@@ -144,7 +144,12 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
         this->follow_path_command->Execute();
     }
 
-    return MotionCommand();
+    MotionCommand output;
+    output.velocity.x = this->command_speed.vx.value();
+    output.velocity.y = this->command_speed.vy.value();
+    output.velocity.omega = this->command_speed.omega.value();
+
+    return output;
 }
 
 FollowerStatus PathPlannerTrajectoryFollower::status()
