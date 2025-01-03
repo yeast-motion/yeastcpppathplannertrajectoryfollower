@@ -91,6 +91,11 @@ std::shared_ptr<PPHolonomicDriveController> controller_from_config(nlohmann::jso
     return controller;
 }
 
+RobotConfig config_from_json(nlohmann::json json)
+{
+
+}
+
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {   
     RobotConfig * config;
@@ -113,10 +118,17 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 			requirements
         )
     );
+
+    this->follow_path_command->Initialize();
 }
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
+    if (!this->follow_path_command->IsFinished())
+    {
+        this->follow_path_command->Execute();
+    }
+
     return MotionCommand();
 }
 
