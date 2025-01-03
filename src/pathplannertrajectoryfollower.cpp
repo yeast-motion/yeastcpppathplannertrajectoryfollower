@@ -180,3 +180,8 @@ frc::ChassisSpeeds PathPlannerTrajectoryFollower::get_robot_speeds()
 {
     return robot_chassis_speed;
 }
+
+bool PathPlannerTrajectoryFollower::get_should_flip()
+{
+    return false;
+}
