@@ -51,7 +51,7 @@ std::shared_ptr<PathPlannerPath> path_from_trajectory(Trajectory trajectory)
 
     std::shared_ptr<PathPlannerPath> path = std::make_shared<PathPlannerPath>
     (
-        new PathPlannerPath
+        PathPlannerPath
         (
             waypoints,
             rotationTargets,
@@ -68,10 +68,27 @@ std::shared_ptr<PathPlannerPath> path_from_trajectory(Trajectory trajectory)
 	return path;
 }
 
-PPHolonomicDriveController * controller_from_config(nlohmann::json json)
+std::shared_ptr<PPHolonomicDriveController> controller_from_config(nlohmann::json json)
 {
-    PPHolonomicDriveController
-    ()
+    nlohmann::json TranslationPIDjson = json["TranslationPIDConstants"];
+    PIDConstants translationConstants(TranslationPIDjson["kP"], TranslationPIDjson["kI"], TranslationPIDjson["kD"], TranslationPIDjson["iZone"]);
+
+    nlohmann::json RotationPIDjson = json["RotationPIDConstants"];
+    PIDConstants rotationConstants(RotationPIDjson["kP"], RotationPIDjson["kI"], RotationPIDjson["kD"], RotationPIDjson["iZone"]);
+
+    units::time::second_t period = units::time::second_t (json["Period"].get<double>());
+
+    std::shared_ptr<PPHolonomicDriveController> controller = std::make_shared<PPHolonomicDriveController>
+    (
+        PPHolonomicDriveController
+        (
+            translationConstants,
+            rotationConstants,
+            period
+        )
+    );
+
+    return controller;
 }
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
@@ -80,7 +97,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
-    controller.reset(controller_from_config(config_json));
+    controller = controller_from_config(config_json);
 
     this->follow_path_command.reset
     (
