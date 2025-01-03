@@ -100,7 +100,6 @@ RobotConfig config_from_json(nlohmann::json json)
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {   
-    RobotConfig * config;
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
