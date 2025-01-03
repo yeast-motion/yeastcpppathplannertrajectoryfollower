@@ -5,6 +5,8 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "pathplanner/lib/controllers/PPHolonomicDriveController.h"
 
+#include "extendedrobotconfig.hpp"
+
 using namespace std;
 using namespace yeast_motion;
 using namespace pathplanner;
@@ -93,7 +95,7 @@ std::shared_ptr<PPHolonomicDriveController> controller_from_config(nlohmann::jso
 
 RobotConfig config_from_json(nlohmann::json json)
 {
-
+    return ExtendedRobotConfig::from_json(json);
 }
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
@@ -113,7 +115,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 			std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
             std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
 			controller,
-			*config,
+			config_from_json((trajectory.to_json())["RobotConfig"]),
             std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
 			requirements
         )
