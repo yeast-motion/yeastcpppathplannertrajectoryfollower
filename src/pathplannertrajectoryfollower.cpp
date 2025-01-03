@@ -5,7 +5,7 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "pathplanner/lib/controllers/PPHolonomicDriveController.h"
 
-#include "extendedrobotconfig.hpp"
+#include "yeastcpppathplannertrajectoryfollower/extendedrobotconfig.hpp"
 
 using namespace std;
 using namespace yeast_motion;
@@ -126,6 +126,14 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
+    frc::Pose2d pose
+       (units::length::meter_t(motion_state.measurement.pose.translation.x),
+        units::length::meter_t(motion_state.measurement.pose.translation.y),
+        frc::Rotation2d(units::radian_t(motion_state.measurement.pose.rotation.theta)));
+
+    this->robot_pose = pose;
+
+    
     if (!this->follow_path_command->IsFinished())
     {
         this->follow_path_command->Execute();

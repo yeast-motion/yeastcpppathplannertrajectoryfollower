@@ -1,13 +1,13 @@
 #include <wpi/json.h>
 #include <frc/Errors.h>
 
-#include "extendedrobotconfig.hpp"
+#include "yeastcpppathplannertrajectoryfollower/extendedrobotconfig.hpp"
 
 using namespace pathplanner;
 
-RobotConfig ExtendedRobotConfig::from_json(nlohmann::json json)
+RobotConfig ExtendedRobotConfig::from_json(nlohmann::json input_json)
 {
-	wpi::json json = wpi::json::parse(json.dump());
+	wpi::json json = wpi::json::parse(input_json.dump());
 
 	bool isHolonomic = json.at("holonomicMode").get<bool>();
 	units::kilogram_t mass { json.at("robotMass").get<double>() };
