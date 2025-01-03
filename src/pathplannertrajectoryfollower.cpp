@@ -62,7 +62,7 @@ std::shared_ptr<PathPlannerPath> path_from_trajectory(Trajectory trajectory)
             eventMarkers,
             globalConstraints,
             idealStartingState,
-            goalEndState, 
+            goalEndState,
             reversed
         )
     );
@@ -104,13 +104,15 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
 }
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
-{   
+{
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
     controller = controller_from_config(config_json);
     std::cout << __LINE__ << std::endl;
 
+    this->follow_path_command.release();
+    this->follow_path_command.reset(nullptr);
     this->follow_path_command.reset
     (
         new FollowPathCommand
@@ -166,7 +168,7 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
     {
         if(i.getCommand()->IsFinished())
         {
-            std::cout << "Hit event: " << i.getTriggerName() << std::endl;
+            // std::cout << "Hit event: " << i.getTriggerName() << std::endl;
         }
     }
 
