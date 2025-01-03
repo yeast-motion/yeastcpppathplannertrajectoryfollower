@@ -1,23 +1,32 @@
 #include <exception>
+#include <functional>
 
 #include "yeastcpppathplannertrajectoryfollower/pathplannertrajectoryfollower.hpp"
+#include "pathplanner/lib/path/PathPlannerPath.h"
 
-#include "frc/estimator/SwerveDrivePoseEstimator.h"
-#include "frc/kinematics/SwerveDriveKinematics.h"
-#include "frc/kinematics/SwerveDriveOdometry.h"
-#include "frc/kinematics/SwerveModulePosition.h"
-#include "frc/kinematics/SwerveModuleState.h"
-#include "frc/kinematics/ChassisSpeeds.h"
-#include "frc/geometry/Rotation2d.h"
-#include "frc/geometry/Translation2d.h"
-#include "frc/geometry/Pose2d.h"
-
+using namespace std;
 using namespace yeast_motion;
-
+using namespace pathplanner;
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
-{
+{   
+    RobotConfig * config;
+    frc2::Requirements requirements;
 
+    this->follow_path_command.reset
+    (
+        new FollowPathCommand
+        (
+            path,
+			std::bind(&PathPlannerTrajectoryFollower::get_robot_pose, this),
+			std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
+            std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
+			controller,
+			*config,
+            std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
+			requirements
+        )
+    );
 }
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)

@@ -7,7 +7,7 @@ BUILD_TYPE ?= Release
 BUILD_DIR ?= build
 
 ADDITIONAL_INCLUDE_PATHS = \
-	../yeastcpp/include; \
+	../yeastcpp/include;/usr/local/include/wpilibNewCommands;/usr/local/include/wpilibc;/usr/local/include/hal;/usr/local/include/ntcore \
 
 # Set the install directory
 INSTALL_DIR ?= /usr/local
@@ -21,7 +21,7 @@ clean:
 
 configure:
 	mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) .. -DADDITIONAL_INCLUDE_PATHS="$(ADDITIONAL_INCLUDE_PATHS)"
+	cd $(BUILD_DIR) && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DADDITIONAL_INCLUDE_PATHS="$(ADDITIONAL_INCLUDE_PATHS)"
 
 build: configure
 	cd $(BUILD_DIR) && make
