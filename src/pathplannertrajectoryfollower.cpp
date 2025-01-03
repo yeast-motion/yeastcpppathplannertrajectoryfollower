@@ -133,7 +133,13 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 
     this->robot_pose = pose;
 
-    
+    frc::ChassisSpeeds speeds;
+    speeds.vx = units::velocity::meters_per_second_t(motion_state.measurement.velocity.x);
+    speeds.vy = units::velocity::meters_per_second_t(motion_state.measurement.velocity.y);
+    speeds.omega = units::angular_velocity::radians_per_second_t(motion_state.measurement.velocity.omega);
+
+    this->robot_chassis_speed = speeds;
+
     if (!this->follow_path_command->IsFinished())
     {
         this->follow_path_command->Execute();
