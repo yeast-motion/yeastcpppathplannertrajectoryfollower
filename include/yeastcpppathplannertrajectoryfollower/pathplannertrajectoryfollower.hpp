@@ -32,5 +32,6 @@ namespace yeast_motion
             std::unique_ptr<pathplanner::FollowPathCommand> follow_path_command;
             std::shared_ptr<pathplanner::PathPlannerPath> path;
             std::shared_ptr<pathplanner::PathFollowingController> controller;
+            nlohmann::json config_json;
     };
 }
