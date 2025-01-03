@@ -14,42 +14,42 @@ using namespace pathplanner;
 std::shared_ptr<PathPlannerPath> path_from_trajectory(Trajectory trajectory)
 {
     std::vector<Waypoint> waypoints;
-    for (nlohmann::json i : (trajectory.to_json())["Waypoints"])
+    for (size_t i = 0; i < trajectory.to_json()["waypoints"].size(); i++)
     {
-        waypoints.push_back(Waypoint::fromJson(wpi::json(i.dump())));
+        waypoints.push_back(Waypoint::fromJson(wpi::json::parse(trajectory.to_json()["waypoints"][i].dump())));
     }
 
     std::vector<RotationTarget> rotationTargets;
-    for (nlohmann::json i : (trajectory.to_json())["RotationTargets"])
+    for (size_t i = 0; i < trajectory.to_json()["rotationTargets"].size(); i++)
     {
-        rotationTargets.push_back(RotationTarget::fromJson(wpi::json(i.dump())));
+        rotationTargets.push_back(RotationTarget::fromJson(wpi::json::parse(trajectory.to_json()["rotationTargets"][i].dump())));
     }
 
     std::vector<PointTowardsZone> pointTowardsZones;
-    for (nlohmann::json i : (trajectory.to_json())["PointTowardsZones"])
+    for (size_t i = 0; i < trajectory.to_json()["pointTowardsZones"].size(); i++)
     {
-        pointTowardsZones.push_back(PointTowardsZone::fromJson(wpi::json(i.dump())));
+        pointTowardsZones.push_back(PointTowardsZone::fromJson(wpi::json::parse(trajectory.to_json()["pointTowardsZones"][i].dump())));
     }
 
     std::vector<ConstraintsZone> constraintZones;
-    for (nlohmann::json i : (trajectory.to_json())["ConstraintZones"])
+    for (size_t i = 0; i < trajectory.to_json()["constraintZones"].size(); i++)
     {
-        constraintZones.push_back(ConstraintsZone::fromJson(wpi::json(i.dump())));
+        constraintZones.push_back(ConstraintsZone::fromJson(wpi::json::parse(trajectory.to_json()["constraintZones"][i].dump())));
     }
 
     std::vector<EventMarker> eventMarkers;
-    for (nlohmann::json i : (trajectory.to_json())["EventMarkers"])
+    for (size_t i = 0; i < trajectory.to_json()["eventMarkers"].size(); i++)
     {
-        eventMarkers.push_back(EventMarker::fromJson(wpi::json(i.dump())));
+        eventMarkers.push_back(EventMarker::fromJson(wpi::json::parse(trajectory.to_json()["eventMarkers"][i].dump())));
     }
 
-    PathConstraints globalConstraints = PathConstraints::fromJson((wpi::json((trajectory.to_json()["GlobalConstraints"]).dump())));
+    PathConstraints globalConstraints = PathConstraints::fromJson((wpi::json::parse((trajectory.to_json()["globalConstraints"]).dump())));
 
-    IdealStartingState idealStartingState = IdealStartingState::fromJson((wpi::json((trajectory.to_json()["IdealStartingState"]).dump())));
+    IdealStartingState idealStartingState = IdealStartingState::fromJson((wpi::json::parse((trajectory.to_json()["idealStartingState"]).dump())));
 
-    GoalEndState goalEndState = GoalEndState::fromJson((wpi::json((trajectory.to_json()["GoalEndState"]).dump())));
+    GoalEndState goalEndState = GoalEndState::fromJson((wpi::json::parse((trajectory.to_json()["goalEndState"]).dump())));
 
-    bool reversed = (trajectory.to_json())["Reversed"];
+    bool reversed = (trajectory.to_json())["reversed"];
 
     std::shared_ptr<PathPlannerPath> path = std::make_shared<PathPlannerPath>
     (
@@ -98,12 +98,18 @@ RobotConfig config_from_json(nlohmann::json json)
     return ExtendedRobotConfig::from_json(json);
 }
 
+void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
+{
+    this->config_json = config;
+}
+
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {   
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
     controller = controller_from_config(config_json);
+    std::cout << __LINE__ << std::endl;
 
     this->follow_path_command.reset
     (
@@ -114,11 +120,13 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 			std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
             std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
 			controller,
-			config_from_json((trajectory.to_json())["RobotConfig"]),
+			config_from_json(config_json),
             std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
 			requirements
         )
     );
+
+    std::cout << __LINE__ << std::endl;
 
     this->follow_path_command->Initialize();
 }

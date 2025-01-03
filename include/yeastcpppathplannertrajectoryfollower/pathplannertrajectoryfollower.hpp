@@ -17,6 +17,8 @@ namespace yeast_motion
     class PathPlannerTrajectoryFollower : public Follower
     {
         public:
+            void set_config(nlohmann::json config);
+
             void begin(Trajectory trajectory);
 
             MotionCommand follow(MotionState motion_state);
