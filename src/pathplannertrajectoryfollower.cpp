@@ -149,6 +149,14 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 
 FollowerStatus PathPlannerTrajectoryFollower::status()
 {
+    for (auto& i : path->getEventMarkers())
+    {
+        if(i.getCommand()->IsFinished())
+        {
+            std::cout << "Hit event: " << i.getTriggerName() << std::endl;
+        }
+    }
+
     return FollowerStatus(nlohmann::json());
 }
 
