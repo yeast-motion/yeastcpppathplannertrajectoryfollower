@@ -49,23 +49,29 @@ std::shared_ptr<PathPlannerPath> path_from_trajectory(Trajectory trajectory)
 
     bool reversed = (trajectory.to_json())["Reversed"];
 
-	PathPlannerPath
+    std::shared_ptr<PathPlannerPath> path = std::make_shared<PathPlannerPath>
     (
-        waypoints,
-        rotationTargets,
-        pointTowardsZones,
-        constraintZones,
-        eventMarkers,
-        globalConstraints,
-        idealStartingState,
-        goalEndState, 
-        reversed
+        new PathPlannerPath
+        (
+            waypoints,
+            rotationTargets,
+            pointTowardsZones,
+            constraintZones,
+            eventMarkers,
+            globalConstraints,
+            idealStartingState,
+            goalEndState, 
+            reversed
+        )
     );
+
+	return path;
 }
 
 PPHolonomicDriveController * controller_from_config(nlohmann::json json)
 {
-
+    PPHolonomicDriveController
+    ()
 }
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
