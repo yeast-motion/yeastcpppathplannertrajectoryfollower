@@ -3,6 +3,7 @@
 
 #include "yeastcpppathplannertrajectoryfollower/pathplannertrajectoryfollower.hpp"
 #include "pathplanner/lib/path/PathPlannerPath.h"
+#include "pathplanner/lib/controllers/PPHolonomicDriveController.h"
 
 using namespace std;
 using namespace yeast_motion;
@@ -12,6 +13,22 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {   
     RobotConfig * config;
     frc2::Requirements requirements;
+
+    // path.reset
+    // (
+    //     new PathPlannerPath
+    //     (
+
+    //     )
+    // );
+
+    // controller.reset
+    // (
+    //     new PPHolonomicDriveController
+    //     (
+
+    //     )
+    // );
 
     this->follow_path_command.reset
     (
