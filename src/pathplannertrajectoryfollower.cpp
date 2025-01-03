@@ -138,3 +138,19 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
 {
     return FollowerStatus(nlohmann::json());
 }
+
+void PathPlannerTrajectoryFollower::yield_robot_output(const frc::ChassisSpeeds& speeds, const pathplanner::DriveFeedforwards& feedforwards)
+{
+    command_speed = speeds;
+    command_feed_forwards = feedforwards;
+}
+
+frc::Pose2d PathPlannerTrajectoryFollower::get_robot_pose()
+{
+    return robot_pose;
+}
+
+frc::ChassisSpeeds PathPlannerTrajectoryFollower::get_robot_speeds()
+{
+    return robot_chassis_speed;
+}

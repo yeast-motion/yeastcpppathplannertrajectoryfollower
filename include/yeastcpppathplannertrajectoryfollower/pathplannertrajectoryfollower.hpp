@@ -32,6 +32,13 @@ namespace yeast_motion
             std::unique_ptr<pathplanner::FollowPathCommand> follow_path_command;
             std::shared_ptr<pathplanner::PathPlannerPath> path;
             std::shared_ptr<pathplanner::PathFollowingController> controller;
+
+            frc::ChassisSpeeds command_speed;
+            pathplanner::DriveFeedforwards command_feed_forwards;
+
+            frc::Pose2d robot_pose;
+            frc::ChassisSpeeds robot_chassis_speed;
+
             nlohmann::json config_json;
     };
 }
