@@ -12,6 +12,10 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "pathplanner/lib/controllers/PathFollowingController.h"
 
+#include "yeastcpppathplannertrajectoryfollower/drive_subsystem.hpp"
+#include "yeastcpppathplannertrajectoryfollower/bogus_subsystem.hpp"
+
+
 namespace yeast_motion
 {
     class PathPlannerTrajectoryFollower : public Follower
@@ -28,6 +32,11 @@ namespace yeast_motion
             frc::Pose2d get_robot_pose();
             frc::ChassisSpeeds get_robot_speeds();
             bool get_should_flip();
+            std::shared_ptr<pathplanner::PathPlannerPath> path_from_trajectory(Trajectory trajectory);
+            void register_named_commands(nlohmann::json event_markers);
+            void register_named_command(std::string name);
+
+            void print_the_guy(std::string name);
 
             void yield_robot_output(const frc::ChassisSpeeds& speeds, const pathplanner::DriveFeedforwards& feedforwards);
 
@@ -40,6 +49,9 @@ namespace yeast_motion
 
             frc::Pose2d robot_pose;
             frc::ChassisSpeeds robot_chassis_speed;
+
+            DriveSubsystem drive_subsystem;
+            BogusSubsystem bogus_subsystem;
 
             nlohmann::json config_json;
     };
