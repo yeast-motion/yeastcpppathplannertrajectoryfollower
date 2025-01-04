@@ -23,19 +23,28 @@ void PathPlannerTrajectoryFollower::register_named_command(std::string name)
     std::cout << "Registering command: " << name << std::endl;
     // EventTrigger(name).OnTrue(frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
     // NamedCommands::registerCommand(name,frc2::cmd::Print("Yeouch"));// frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
-    auto test = frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem });
-    std::cout << "Todd Test: " << std::endl;
-    auto bad = test.get()->GetRequirements();
-    std::cout << "Req Size: " << bad.size() << std::endl;
-    for (auto i : test.get()->GetRequirements())
-    {
-        std::cout << "Here have: " << i->GetName() << std::endl;
-    }
-    std::cout << "Iterated requirements" << std::endl;
-    std::shared_ptr<frc2::Command> command = std::make_shared<frc2::Command> (test.get());
+    // auto test = frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem });
+    // std::cout << "Todd Test: " << std::endl;
+    // auto bad = test.get()->GetRequirements();
+    // std::cout << "Req Size: " << bad.size() << std::endl;
+    // for (auto i : test.get()->GetRequirements())
+    // {
+    //     std::cout << "Here have: " << i->GetName() << std::endl;
+    // }
+    // std::cout << "Iterated requirements" << std::endl;
+    // std::shared_ptr<frc2::Command> command = std::move(frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem }).Unwrap());
+    //frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem }));
 
-    NamedCommands::registerCommand(name, command); //frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem }));
-    auto mycommandafter = NamedCommands::getCommand(name);
+    NamedCommands::registerCommand("my_command", frc2::cmd::Print("Hello"));
+    std::cout << "Registered, now fetching" << std::endl;
+    auto mycommandafter = NamedCommands::getCommand("my_command"); // Seg fault
+
+    // Registered, now fetching
+    // Error: signal 11:
+
+
+
+
     std::cout << "My command after size: " << mycommandafter.get()->GetRequirements().size() << std::endl;
 
     for (auto i : mycommandafter.get()->GetRequirements())
