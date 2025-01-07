@@ -20,45 +20,14 @@ void PathPlannerTrajectoryFollower::print_the_guy(std::string name)
 
 void PathPlannerTrajectoryFollower::register_named_command(std::string name)
 {
-    std::cout << "Registering command: " << name << std::endl;
-    // EventTrigger(name).OnTrue(frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
-    // NamedCommands::registerCommand(name,frc2::cmd::Print("Yeouch"));// frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
-    // auto test = frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem });
-    // std::cout << "Todd Test: " << std::endl;
-    // auto bad = test.get()->GetRequirements();
-    // std::cout << "Req Size: " << bad.size() << std::endl;
-    // for (auto i : test.get()->GetRequirements())
-    // {
-    //     std::cout << "Here have: " << i->GetName() << std::endl;
-    // }
-    // std::cout << "Iterated requirements" << std::endl;
-    // std::shared_ptr<frc2::Command> command = std::move(frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem }).Unwrap());
-    //frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }, { &bogus_subsystem }));
-
-    NamedCommands::registerCommand("my_command", frc2::cmd::Print("Hello"));
-    std::cout << "Registered, now fetching" << std::endl;
-    auto mycommandafter = NamedCommands::getCommand("my_command"); // Seg fault
-
-    // Registered, now fetching
-    // Error: signal 11:
-
-
-
-
-    std::cout << "My command after size: " << mycommandafter.get()->GetRequirements().size() << std::endl;
-
-    for (auto i : mycommandafter.get()->GetRequirements())
-    {
-        std::cout << "After Here have: " << i->GetName() << std::endl;
-    }
-    std::cout << "Command registered" << std::endl;
+    NamedCommands::registerCommand(name, frc2::cmd::Print("Yup"));//frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
 }
 
 void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event_markers)
 {
     register_named_command("todd_command");
-
-    // for (auto& marker : event_markers)
+    // This needs to be updated to dynamically add named commands
+    // for (auto& marker : event_markers) 
     // {
     //     std::cout << "Registering event: " << marker["name"] << std::endl;
     //     register_named_command(marker["name"]);
@@ -67,10 +36,7 @@ void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event
 
 std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajectory(Trajectory trajectory)
 {
-    std::cout << "Going to place: " << std::endl;
     register_named_commands(trajectory.to_json()["eventMarkers"]);
-
-    std::cout << "Going to start allocating nonsense: " << std::endl;
 
     std::vector<Waypoint> waypoints;
     for (size_t i = 0; i < trajectory.to_json()["waypoints"].size(); i++)
@@ -78,15 +44,11 @@ std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajec
         waypoints.push_back(Waypoint::fromJson(wpi::json::parse(trajectory.to_json()["waypoints"][i].dump())));
     }
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-
     std::vector<RotationTarget> rotationTargets;
     for (size_t i = 0; i < trajectory.to_json()["rotationTargets"].size(); i++)
     {
         rotationTargets.push_back(RotationTarget::fromJson(wpi::json::parse(trajectory.to_json()["rotationTargets"][i].dump())));
     }
-
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
     std::vector<PointTowardsZone> pointTowardsZones;
     for (size_t i = 0; i < trajectory.to_json()["pointTowardsZones"].size(); i++)
@@ -94,15 +56,11 @@ std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajec
         pointTowardsZones.push_back(PointTowardsZone::fromJson(wpi::json::parse(trajectory.to_json()["pointTowardsZones"][i].dump())));
     }
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-
     std::vector<ConstraintsZone> constraintZones;
     for (size_t i = 0; i < trajectory.to_json()["constraintZones"].size(); i++)
     {
         constraintZones.push_back(ConstraintsZone::fromJson(wpi::json::parse(trajectory.to_json()["constraintZones"][i].dump())));
     }
-
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
     std::vector<EventMarker> eventMarkers;
     for (size_t i = 0; i < trajectory.to_json()["eventMarkers"].size(); i++)
@@ -110,20 +68,14 @@ std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajec
         eventMarkers.push_back(EventMarker::fromJson(wpi::json::parse(trajectory.to_json()["eventMarkers"][i].dump())));
     }
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-
     PathConstraints globalConstraints = PathConstraints::fromJson((wpi::json::parse((trajectory.to_json()["globalConstraints"]).dump())));
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
     IdealStartingState idealStartingState = IdealStartingState::fromJson((wpi::json::parse((trajectory.to_json()["idealStartingState"]).dump())));
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
     GoalEndState goalEndState = GoalEndState::fromJson((wpi::json::parse((trajectory.to_json()["goalEndState"]).dump())));
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
     bool reversed = (trajectory.to_json())["reversed"];
 
-    std::cout << __FILE__ << ":" << __LINE__ << std::endl;
     std::shared_ptr<PathPlannerPath> path = std::make_shared<PathPlannerPath>
     (
         PathPlannerPath
@@ -139,7 +91,6 @@ std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajec
             reversed
         )
     );
-    std::cout << "Created path" << std::endl;
 
 	return path;
 }
@@ -179,38 +130,15 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {
-    frc2::CommandScheduler::GetInstance().Run();
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
     controller = controller_from_config(config_json);
 
-    std::cout << "Controller created" << std::endl;
-
-
-
-    std::cout << "Going to make command" << std::endl;
-
-    // this->follow_path_command.release();
-    // this->follow_path_command.reset(nullptr);
-    // this->follow_path_command.reset
-    // (
-    //     new FollowPathCommand
-    //     (
-    //         path,
-	// 		std::bind(&PathPlannerTrajectoryFollower::get_robot_pose, this),
-	// 		std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
-    //         std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
-	// 		controller,
-	// 		config_from_json(config_json),
-    //         std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
-	// 		{&drive_subsystem}
-    //     )
-    // );
-
-    // frc2::CommandScheduler::GetInstance().Schedule({ this->follow_path_command.get() });
-
-    frc2::CommandScheduler::GetInstance().Schedule({
+    this->follow_path_command.release();
+    this->follow_path_command.reset(nullptr);
+    this->follow_path_command.reset
+    (
         new FollowPathCommand
         (
             path,
@@ -220,17 +148,15 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 			controller,
 			config_from_json(config_json),
             std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
-			{&drive_subsystem}
+			{}
         )
-    });
+    );
 
-
-    // this->follow_path_command->Initialize();
+    this->follow_path_command->Initialize();
 }
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
-    frc2::CommandScheduler::GetInstance().Run();
     frc::Pose2d pose
        (units::length::meter_t(motion_state.measurement.pose.translation.x),
         units::length::meter_t(motion_state.measurement.pose.translation.y),
@@ -260,11 +186,6 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 
 FollowerStatus PathPlannerTrajectoryFollower::status()
 {
-    for (auto& i : path->getEventMarkers())
-    {
-        std::cout << "Events: " << i.getTriggerName() << std::endl;
-    }
-
     return FollowerStatus(nlohmann::json());
 }
 

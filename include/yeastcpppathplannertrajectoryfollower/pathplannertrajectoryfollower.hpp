@@ -50,8 +50,8 @@ namespace yeast_motion
             frc::Pose2d robot_pose;
             frc::ChassisSpeeds robot_chassis_speed;
 
-            DriveSubsystem drive_subsystem;
-            BogusSubsystem bogus_subsystem;
+            // DriveSubsystem drive_subsystem;
+            // BogusSubsystem bogus_subsystem;
 
             nlohmann::json config_json;
     };
