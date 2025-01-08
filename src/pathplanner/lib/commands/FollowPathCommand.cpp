@@ -16,7 +16,6 @@ FollowPathCommand::FollowPathCommand(std::shared_ptr<PathPlannerPath> path,
 		controller), m_robotConfig(robotConfig), m_shouldFlipPath(
 		shouldFlipPath), m_eventScheduler() {
 
-			std::cout << "Constructing follow path command?" << std::endl;
 	AddRequirements(requirements);
 
 	auto driveRequirements = GetRequirements();
