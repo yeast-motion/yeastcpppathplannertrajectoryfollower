@@ -192,9 +192,9 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
 {
     FollowerStatus result;
     result.passed_commands = this->passed_commands;
-    for(auto i : passed_commands)
+    if (this->follow_path_command->IsFinished())
     {
-        std::cout << "Markers: " << i << std::endl;
+        result.finished = true;
     }
     return result;
 }
