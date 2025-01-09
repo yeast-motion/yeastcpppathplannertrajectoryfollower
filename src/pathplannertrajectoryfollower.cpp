@@ -13,25 +13,28 @@ using namespace std;
 using namespace yeast_motion;
 using namespace pathplanner;
 
-void PathPlannerTrajectoryFollower::print_the_guy(std::string name)
+void PathPlannerTrajectoryFollower::log_command(std::string name)
 {
-    std::cout << "Event: " << name << std::endl;
+   this->passed_commands.push_back(name);
 }
 
 void PathPlannerTrajectoryFollower::register_named_command(std::string name)
 {
-    NamedCommands::registerCommand(name, frc2::cmd::Print("Yup"));//frc2::cmd::RunOnce([this, name] { this->print_the_guy(name); }));
+    NamedCommands::registerCommand(name, frc2::cmd::RunOnce([this, name] { this->log_command(name); }));
 }
 
 void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event_markers)
 {
-    register_named_command("todd_command");
-    // This needs to be updated to dynamically add named commands
-    // for (auto& marker : event_markers) 
-    // {
-    //     std::cout << "Registering event: " << marker["name"] << std::endl;
-    //     register_named_command(marker["name"]);
-    // }
+    // register_named_command("todd_command");
+    for (auto& marker : event_markers)
+    {
+        if (marker["command"]["type"] == "named")
+        {
+            std::string name = marker["command"]["data"]["name"];
+            std::cout << "Registering event: " << name << std::endl;
+            register_named_command(name);
+        }
+    }
 }
 
 std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajectory(Trajectory trajectory)
@@ -130,6 +133,7 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
 
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 {
+    this->passed_commands.clear();
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
@@ -186,7 +190,13 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 
 FollowerStatus PathPlannerTrajectoryFollower::status()
 {
-    return FollowerStatus(nlohmann::json());
+    FollowerStatus result;
+    result.passed_commands = this->passed_commands;
+    for(auto i : passed_commands)
+    {
+        std::cout << "Markers: " << i << std::endl;
+    }
+    return result;
 }
 
 void PathPlannerTrajectoryFollower::yield_robot_output(const frc::ChassisSpeeds& speeds, const pathplanner::DriveFeedforwards& feedforwards)

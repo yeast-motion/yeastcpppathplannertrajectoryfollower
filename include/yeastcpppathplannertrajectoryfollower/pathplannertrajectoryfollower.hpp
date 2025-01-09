@@ -36,7 +36,7 @@ namespace yeast_motion
             void register_named_commands(nlohmann::json event_markers);
             void register_named_command(std::string name);
 
-            void print_the_guy(std::string name);
+            void log_command(std::string name);
 
             void yield_robot_output(const frc::ChassisSpeeds& speeds, const pathplanner::DriveFeedforwards& feedforwards);
 
@@ -50,8 +50,7 @@ namespace yeast_motion
             frc::Pose2d robot_pose;
             frc::ChassisSpeeds robot_chassis_speed;
 
-            // DriveSubsystem drive_subsystem;
-            // BogusSubsystem bogus_subsystem;
+            std::vector<std::string> passed_commands;
 
             nlohmann::json config_json;
     };
