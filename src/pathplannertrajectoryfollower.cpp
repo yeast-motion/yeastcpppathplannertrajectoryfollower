@@ -20,19 +20,27 @@ void PathPlannerTrajectoryFollower::log_command(std::string name)
 
 void PathPlannerTrajectoryFollower::register_named_command(std::string name)
 {
+    std::cout << "Registering command: " << name << std::endl;
     NamedCommands::registerCommand(name, frc2::cmd::RunOnce([this, name] { this->log_command(name); }));
 }
 
 void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event_markers)
 {
-    // register_named_command("todd_command");
-    for (auto& marker : event_markers)
+    if (event_markers.contains("type") && event_markers.contains("data"))
     {
-        if (marker["command"]["type"] == "named")
+        if (event_markers["type"].is_string() && event_markers["type"] == "named")
         {
-            std::string name = marker["command"]["data"]["name"];
-            std::cout << "Registering event: " << name << std::endl;
-            register_named_command(name);
+            if (event_markers["data"].contains("name") && event_markers["data"]["name"].is_string())
+            {
+                register_named_command(event_markers["data"]["name"]);
+            }
+        }
+    }
+    if (event_markers.is_object() || event_markers.is_array())
+    {
+        for (auto object : event_markers)
+        {
+            register_named_commands(object);
         }
     }
 }
