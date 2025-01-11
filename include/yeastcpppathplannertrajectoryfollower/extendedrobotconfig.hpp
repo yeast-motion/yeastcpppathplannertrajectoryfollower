@@ -1,3 +1,5 @@
+#pragma once
+
 #include <nlohmann/json.hpp>
 #include "pathplanner/lib/config/RobotConfig.h"
 

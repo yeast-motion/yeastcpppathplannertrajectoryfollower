@@ -1,13 +1,13 @@
 # Makefile for CMake projects
 
 # Set the default build type to Release
-BUILD_TYPE ?= Release
+BUILD_TYPE ?= Debug
 
 # Set the build directory
 BUILD_DIR ?= build
 
 ADDITIONAL_INCLUDE_PATHS = \
-	../yeastcpp/include;/usr/local/include/wpilibNewCommands;/usr/local/include/wpilibc;/usr/local/include/hal;/usr/local/include/ntcore \
+	../yeastcpp/include;
 
 # Set the install directory
 INSTALL_DIR ?= /usr/local

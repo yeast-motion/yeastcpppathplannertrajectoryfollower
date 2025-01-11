@@ -12,10 +12,6 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "pathplanner/lib/controllers/PathFollowingController.h"
 
-#include "yeastcpppathplannertrajectoryfollower/drive_subsystem.hpp"
-#include "yeastcpppathplannertrajectoryfollower/bogus_subsystem.hpp"
-
-
 namespace yeast_motion
 {
     class PathPlannerTrajectoryFollower : public Follower

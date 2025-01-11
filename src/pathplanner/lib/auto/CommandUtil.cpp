@@ -23,7 +23,7 @@ frc2::CommandPtr CommandUtil::wrappedEventCommand(
 		return command->IsFinished();
 	}
 	);
-	wrapped.AddRequirements(command->GetRequirements());
+	// wrapped.AddRequirements(command->GetRequirements());
 
 	return std::move(wrapped).ToPtr();
 }
