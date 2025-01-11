@@ -139,8 +139,10 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
     this->config_json = config;
 }
 
-void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
+void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState initial_state)
 {
+    this->set_motion_state(initial_state);
+
     this->passed_commands.clear();
     frc2::Requirements requirements;
 
@@ -169,19 +171,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory)
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
-    frc::Pose2d pose
-       (units::length::meter_t(motion_state.measurement.pose.translation.x),
-        units::length::meter_t(motion_state.measurement.pose.translation.y),
-        frc::Rotation2d(units::radian_t(motion_state.measurement.pose.rotation.theta)));
-
-    this->robot_pose = pose;
-
-    frc::ChassisSpeeds speeds;
-    speeds.vx = units::velocity::meters_per_second_t(motion_state.measurement.velocity.x);
-    speeds.vy = units::velocity::meters_per_second_t(motion_state.measurement.velocity.y);
-    speeds.omega = units::angular_velocity::radians_per_second_t(motion_state.measurement.velocity.omega);
-
-    this->robot_chassis_speed = speeds;
+    set_motion_state(motion_state);
 
     if (!this->follow_path_command->IsFinished())
     {
@@ -211,6 +201,23 @@ void PathPlannerTrajectoryFollower::yield_robot_output(const frc::ChassisSpeeds&
 {
     command_speed = speeds;
     command_feed_forwards = feedforwards;
+}
+
+void PathPlannerTrajectoryFollower::set_motion_state(MotionState motion_state)
+{
+    frc::Pose2d pose
+       (units::length::meter_t(motion_state.measurement.pose.translation.x),
+        units::length::meter_t(motion_state.measurement.pose.translation.y),
+        frc::Rotation2d(units::radian_t(motion_state.measurement.pose.rotation.theta)));
+
+    this->robot_pose = pose;
+
+    frc::ChassisSpeeds speeds;
+    speeds.vx = units::velocity::meters_per_second_t(motion_state.measurement.velocity.x);
+    speeds.vy = units::velocity::meters_per_second_t(motion_state.measurement.velocity.y);
+    speeds.omega = units::angular_velocity::radians_per_second_t(motion_state.measurement.velocity.omega);
+
+    this->robot_chassis_speed = speeds;
 }
 
 frc::Pose2d PathPlannerTrajectoryFollower::get_robot_pose()
