@@ -19,12 +19,13 @@ namespace yeast_motion
         public:
             void set_config(nlohmann::json config);
 
-            void begin(Trajectory trajectory);
+            void begin(Trajectory trajectory, MotionState initial_state);
 
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
 
         private:
+            void set_motion_state(MotionState state);
             frc::Pose2d get_robot_pose();
             frc::ChassisSpeeds get_robot_speeds();
             bool get_should_flip();
