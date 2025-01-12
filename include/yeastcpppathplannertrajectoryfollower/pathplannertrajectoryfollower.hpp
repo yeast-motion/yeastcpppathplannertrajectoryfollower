@@ -19,7 +19,7 @@ namespace yeast_motion
         public:
             void set_config(nlohmann::json config);
 
-            void begin(Trajectory trajectory, MotionState initial_state);
+            void begin(Trajectory trajectory, MotionState initial_state = MotionState());
 
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
