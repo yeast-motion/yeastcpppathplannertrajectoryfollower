@@ -15,7 +15,6 @@ FollowPathCommand::FollowPathCommand(std::shared_ptr<PathPlannerPath> path,
 		poseSupplier), m_speedsSupplier(speedsSupplier), m_output(output), m_controller(
 		controller), m_robotConfig(robotConfig), m_shouldFlipPath(
 		shouldFlipPath), m_eventScheduler() {
-
 	// AddRequirements(requirements);
 
 	// auto driveRequirements = GetRequirements();
