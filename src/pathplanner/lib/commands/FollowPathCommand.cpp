@@ -16,19 +16,19 @@ FollowPathCommand::FollowPathCommand(std::shared_ptr<PathPlannerPath> path,
 		controller), m_robotConfig(robotConfig), m_shouldFlipPath(
 		shouldFlipPath), m_eventScheduler() {
 
-	AddRequirements(requirements);
+	// AddRequirements(requirements);
 
-	auto driveRequirements = GetRequirements();
-	auto eventReqs = EventScheduler::getSchedulerRequirements(m_originalPath);
+	// auto driveRequirements = GetRequirements();
+	// auto eventReqs = EventScheduler::getSchedulerRequirements(m_originalPath);
 
-	for (auto requirement : eventReqs) {
-		if (driveRequirements.find(requirement) != driveRequirements.end()) {
-			throw FRC_MakeError(frc::err::CommandIllegalUse,
-					"Events that are triggered during path following cannot require the drive subsystem");
-		}
-	}
+	// for (auto requirement : eventReqs) {
+	// 	if (driveRequirements.find(requirement) != driveRequirements.end()) {
+	// 		throw FRC_MakeError(frc::err::CommandIllegalUse,
+	// 				"Events that are triggered during path following cannot require the drive subsystem");
+	// 	}
+	// }
 
-	AddRequirements(eventReqs);
+	// AddRequirements(eventReqs);
 
 	m_path = m_originalPath;
 	// Ensure the ideal trajectory is generated
