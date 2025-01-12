@@ -1,5 +1,8 @@
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include <functional>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
@@ -295,3 +298,5 @@ private:
 			frc2::CommandPtr(std::shared_ptr<PathPlannerPath>, PathConstraints)> m_pathfindThenFollowPathCommandBuilder;
 };
 }
+
+#pragma GCC diagnostic pop
