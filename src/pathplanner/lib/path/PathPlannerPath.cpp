@@ -16,6 +16,7 @@
 using namespace pathplanner;
 
 int PathPlannerPath::m_instances = 0;
+std::string PathPlannerPath::choreo_file_path = "";
 
 PathPlannerPath::PathPlannerPath(std::vector<Waypoint> waypoints,
 		std::vector<RotationTarget> rotationTargets,
@@ -144,13 +145,11 @@ std::shared_ptr<PathPlannerPath> PathPlannerPath::fromPathFile(
 
 void PathPlannerPath::loadChoreoTrajectoryIntoCache(
 		std::string trajectoryName) {
-	const std::string filePath = frc::filesystem::GetDeployDirectory()
-			+ "/choreo/" + trajectoryName + ".traj";
 
-	auto fileBuffer = wpi::MemoryBuffer::GetFile(filePath);
+	auto fileBuffer = wpi::MemoryBuffer::GetFile(choreo_file_path);
 
 	if (!fileBuffer) {
-		throw std::runtime_error("Cannot open file: " + filePath);
+		throw std::runtime_error("Cannot open file: " + choreo_file_path);
 	}
 
 	wpi::json json = wpi::json::parse(fileBuffer.value()->GetCharBuffer());

@@ -336,6 +336,8 @@ public:
 		PathPlannerPath::getChoreoPathCache().clear();
 	}
 
+	static std::string choreo_file_path;
+
 private:
 	std::vector<PathPoint> createPath();
 
