@@ -169,6 +169,42 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     this->follow_path_command->Initialize();
 }
 
+void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state)
+{
+    this->begin_choreo(file_path, trajectory_name, (size_t)0, initial_state);
+}
+
+void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state)
+{
+    this->set_motion_state(initial_state);
+
+    this->passed_commands.clear();
+    frc2::Requirements requirements;
+
+    PathPlannerPath::choreo_file_path = file_path;
+    path = PathPlannerPath::fromChoreoTrajectory(trajectory_name);
+    controller = controller_from_config(config_json);
+
+    this->follow_path_command.release();
+    this->follow_path_command.reset(nullptr);
+    this->follow_path_command.reset
+    (
+        new FollowPathCommand
+        (
+            path,
+			std::bind(&PathPlannerTrajectoryFollower::get_robot_pose, this),
+			std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
+            std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
+			controller,
+			config_from_json(config_json),
+            std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
+			{}
+        )
+    );
+
+    this->follow_path_command->Initialize();
+}
+
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
     set_motion_state(motion_state);

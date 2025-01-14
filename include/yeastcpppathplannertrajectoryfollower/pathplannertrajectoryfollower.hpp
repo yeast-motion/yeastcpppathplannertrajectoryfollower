@@ -20,6 +20,8 @@ namespace yeast_motion
             void set_config(nlohmann::json config);
 
             void begin(Trajectory trajectory, MotionState initial_state = MotionState());
+            void begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state = MotionState());
+            void begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state = MotionState());
 
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
