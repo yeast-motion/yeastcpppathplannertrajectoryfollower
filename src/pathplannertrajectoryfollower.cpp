@@ -15,7 +15,8 @@ using namespace pathplanner;
 
 void PathPlannerTrajectoryFollower::log_command(std::string name)
 {
-   this->passed_commands.push_back(name);
+    std::cout << "Registering event: " << name << std::endl;
+    this->passed_commands.push_back(name);
 }
 
 void PathPlannerTrajectoryFollower::register_named_command(std::string name)
