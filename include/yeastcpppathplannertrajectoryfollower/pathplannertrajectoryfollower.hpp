@@ -26,6 +26,8 @@ namespace yeast_motion
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
 
+            std::vector<yeast_motion::Pose2D> get_path_poses(void);
+
         private:
             void set_motion_state(MotionState state);
             frc::Pose2d get_robot_pose();

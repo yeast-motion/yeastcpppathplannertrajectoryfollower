@@ -234,6 +234,28 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
     return result;
 }
 
+std::vector<yeast_motion::Pose2D> PathPlannerTrajectoryFollower::get_path_poses(void)
+{
+    std::vector<yeast_motion::Pose2D> poses;
+
+    std::vector<pathplanner::PathPoint> points = this->path->getAllPathPoints();
+
+    for (auto point : points)
+    {
+        yeast_motion::Pose2D pose;
+        pose.translation.x = point.position.X().value();
+        pose.translation.y = point.position.Y().value();
+        if (point.rotationTarget.has_value())
+        {
+            pose.rotation.theta = point.rotationTarget.value().getTarget().Radians().value();
+        }
+
+        poses.push_back(pose);
+    }
+
+    return poses;
+}
+
 void PathPlannerTrajectoryFollower::yield_robot_output(const frc::ChassisSpeeds& speeds, const pathplanner::DriveFeedforwards& feedforwards)
 {
     command_speed = speeds;
