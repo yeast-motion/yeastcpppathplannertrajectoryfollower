@@ -46,9 +46,18 @@ void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event
     }
 }
 
+void PathPlannerTrajectoryFollower::register_named_commands(std::vector<pathplanner::EventMarker> event_markers)
+{
+    for (auto event_marker : event_markers)
+    {
+        register_named_command(event_marker.getCommand()->GetName());
+    }
+}
+
 std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajectory(Trajectory trajectory)
 {
-    register_named_commands(trajectory.to_json()["eventMarkers"]);
+    PathPlannerTrajectoryFollower traj_follower;
+    traj_follower.register_named_commands(trajectory.to_json()["eventMarkers"]);
 
     std::vector<Waypoint> waypoints;
     for (size_t i = 0; i < trajectory.to_json()["waypoints"].size(); i++)
@@ -107,6 +116,12 @@ std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajec
 	return path;
 }
 
+std::shared_ptr<pathplanner::PathPlannerPath> PathPlannerTrajectoryFollower::path_from_choreo(std::string file_path, std::string trajectory_name, size_t split_index)
+{
+    PathPlannerPath::choreo_file_path = file_path;
+    return PathPlannerPath::fromChoreoTrajectory(trajectory_name);
+}
+
 std::shared_ptr<PPHolonomicDriveController> controller_from_config(nlohmann::json json)
 {
     nlohmann::json TranslationPIDjson = json["TranslationPIDConstants"];
@@ -140,6 +155,37 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
     this->config_json = config;
 }
 
+void PathPlannerTrajectoryFollower::begin(std::shared_ptr<pathplanner::PathPlannerPath> path, MotionState initial_state)
+{
+    this->set_motion_state(initial_state);
+
+    this->passed_commands.clear();
+    frc2::Requirements requirements;
+
+    register_named_commands(path->getEventMarkers());
+    this->path = path;
+    controller = controller_from_config(config_json);
+
+    this->follow_path_command.release();
+    this->follow_path_command.reset(nullptr);
+    this->follow_path_command.reset
+    (
+        new FollowPathCommand
+        (
+            path,
+            std::bind(&PathPlannerTrajectoryFollower::get_robot_pose, this),
+            std::bind(&PathPlannerTrajectoryFollower::get_robot_speeds, this),
+            std::bind(&PathPlannerTrajectoryFollower::yield_robot_output, this, placeholders::_1, placeholders::_2),
+            controller,
+            config_from_json(config_json),
+            std::bind(&PathPlannerTrajectoryFollower::get_should_flip, this),
+            {}
+        )
+    );
+
+    this->follow_path_command->Initialize();
+}
+
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState initial_state)
 {
     this->set_motion_state(initial_state);
@@ -147,7 +193,8 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     this->passed_commands.clear();
     frc2::Requirements requirements;
 
-    path = path_from_trajectory(trajectory);
+    register_named_commands(trajectory.to_json()["eventMarkers"]);
+    path = PathPlannerTrajectoryFollower::path_from_trajectory(trajectory);
     controller = controller_from_config(config_json);
 
     this->follow_path_command.release();
@@ -182,8 +229,9 @@ void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::str
     this->passed_commands.clear();
     frc2::Requirements requirements;
 
-    PathPlannerPath::choreo_file_path = file_path;
-    path = PathPlannerPath::fromChoreoTrajectory(trajectory_name);
+    // PathPlannerPath::choreo_file_path = file_path;
+    // path = PathPlannerPath::fromChoreoTrajectory(trajectory_name);
+    PathPlannerTrajectoryFollower::path_from_choreo(file_path, trajectory_name, split_index);
     controller = controller_from_config(config_json);
 
     this->follow_path_command.release();
@@ -234,11 +282,11 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
     return result;
 }
 
-std::vector<yeast_motion::Pose2D> PathPlannerTrajectoryFollower::get_path_poses(void)
+std::vector<yeast_motion::Pose2D> PathPlannerTrajectoryFollower::get_path_poses(std::shared_ptr<pathplanner::PathPlannerPath> path)
 {
     std::vector<yeast_motion::Pose2D> poses;
 
-    std::vector<pathplanner::PathPoint> points = this->path->getAllPathPoints();
+    std::vector<pathplanner::PathPoint> points = path->getAllPathPoints();
 
     for (auto point : points)
     {

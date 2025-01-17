@@ -19,6 +19,7 @@ namespace yeast_motion
         public:
             void set_config(nlohmann::json config);
 
+            void begin(std::shared_ptr<pathplanner::PathPlannerPath> path, MotionState initial_state = MotionState());
             void begin(Trajectory trajectory, MotionState initial_state = MotionState());
             void begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state = MotionState());
             void begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state = MotionState());
@@ -26,15 +27,17 @@ namespace yeast_motion
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
 
-            std::vector<yeast_motion::Pose2D> get_path_poses(void);
+            static std::vector<yeast_motion::Pose2D> get_path_poses(std::shared_ptr<pathplanner::PathPlannerPath> path);
+            static std::shared_ptr<pathplanner::PathPlannerPath> path_from_trajectory(Trajectory trajectory);
+            static std::shared_ptr<pathplanner::PathPlannerPath> path_from_choreo(std::string file_path, std::string trajectory_name, size_t split_index=0);
 
         private:
             void set_motion_state(MotionState state);
             frc::Pose2d get_robot_pose();
             frc::ChassisSpeeds get_robot_speeds();
             bool get_should_flip();
-            std::shared_ptr<pathplanner::PathPlannerPath> path_from_trajectory(Trajectory trajectory);
             void register_named_commands(nlohmann::json event_markers);
+            void register_named_commands(std::vector<pathplanner::EventMarker> event_markers);
             void register_named_command(std::string name);
 
             void log_command(std::string name);
