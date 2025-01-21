@@ -50,7 +50,10 @@ void PathPlannerTrajectoryFollower::register_named_commands(std::vector<pathplan
 {
     for (auto event_marker : event_markers)
     {
-        register_named_command(event_marker.getCommand()->GetName());
+        if (event_marker.getCommand().get() != nullptr)
+        {
+            register_named_command(event_marker.getCommand()->GetName());
+        }
     }
 }
 
@@ -162,7 +165,7 @@ void PathPlannerTrajectoryFollower::begin(std::shared_ptr<pathplanner::PathPlann
     this->passed_commands.clear();
     frc2::Requirements requirements;
 
-    register_named_commands(path->getEventMarkers());
+    // register_named_commands(path->getEventMarkers());
     this->path = path;
     controller = controller_from_config(config_json);
 

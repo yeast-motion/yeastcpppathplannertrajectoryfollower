@@ -12,6 +12,9 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "pathplanner/lib/controllers/PathFollowingController.h"
 
+// TODO - Make singleton maybe
+// Lets registered commands run on the instance, so pregen paths wont break markers
+
 namespace yeast_motion
 {
     class PathPlannerTrajectoryFollower : public Follower
