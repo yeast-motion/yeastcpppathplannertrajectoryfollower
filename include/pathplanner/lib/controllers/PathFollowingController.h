@@ -2,6 +2,7 @@
 
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Translation2d.h>
 #include <units/length.h>
 #include "pathplanner/lib/trajectory/PathPlannerTrajectory.h"
 
@@ -37,6 +38,13 @@ public:
 	 * @return Positional error, in meters
 	 */
 	virtual units::meter_t getPositionalError() = 0;
+
+	/**
+	 * Get the current translation representation of the error in the path controller
+	 *
+	 * @return Positional error, as a trnaslation
+	 */
+	virtual frc::Translation2d getTranslationalError() = 0;
 
 	/**
 	 * Is this controller for holonomic drivetrains? Used to handle some differences in functionality

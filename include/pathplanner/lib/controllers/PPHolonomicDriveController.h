@@ -57,6 +57,16 @@ public:
 	}
 
 	/**
+	 * Get the current translation representation of the error in the path controller
+	 *
+	 * @return Positional error, as a trnaslation
+	 */
+	virtual frc::Translation2d getTranslationalError()
+	{
+		return m_translationError;
+	}
+
+	/**
 	 * Calculates the next output of the holonomic drive controller
 	 *
 	 * @param currentPose The current pose

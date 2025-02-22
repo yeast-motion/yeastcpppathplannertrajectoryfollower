@@ -46,6 +46,7 @@ public:
 			const PathPlannerTrajectoryState &targetState) override {
 		m_lastError = currentPose.Translation().Distance(
 				targetState.pose.Translation());
+		m_lastTranslationError = targetState.pose.Translation() - currentPose.Translation();
 
 		return Calculate(currentPose, targetState.pose,
 				targetState.linearVelocity, targetState.fieldSpeeds.omega);
@@ -61,6 +62,16 @@ public:
 	}
 
 	/**
+	 * Get the current translation representation of the error in the path controller
+	 *
+	 * @return Positional error, as a trnaslation
+	 */
+	virtual frc::Translation2d getTranslationalError()
+	{
+		return m_lastTranslationError;
+	}
+
+	/**
 	 * Is this controller for holonomic drivetrains? Used to handle some differences in functionality
 	 * in the path following command.
 	 *
@@ -72,5 +83,6 @@ public:
 
 private:
 	units::meter_t m_lastError;
+	frc::Translation2d m_lastTranslationError;
 };
 }
