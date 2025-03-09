@@ -19,9 +19,9 @@ namespace yeast_motion
         public:
             void set_config(nlohmann::json config);
 
-            void begin(Trajectory trajectory, MotionState initial_state = MotionState());
-            void begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state = MotionState());
-            void begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state = MotionState());
+            void begin(Trajectory trajectory, MotionState initial_state = MotionState(), bool flipped = false);
+            void begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state = MotionState(), bool flipped = false);
+            void begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state = MotionState(), bool flipped = false);
 
             MotionCommand follow(MotionState motion_state);
             FollowerStatus status();
@@ -54,5 +54,7 @@ namespace yeast_motion
             std::vector<std::string> passed_commands;
 
             nlohmann::json config_json;
+
+            bool flipped = false;
     };
 }

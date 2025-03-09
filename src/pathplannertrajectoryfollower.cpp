@@ -140,9 +140,11 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
     this->config_json = config;
 }
 
-void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState initial_state)
+void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState initial_state, bool flipped)
 {
     this->set_motion_state(initial_state);
+
+    this->flipped = flipped;
 
     this->passed_commands.clear();
     frc2::Requirements requirements;
@@ -170,14 +172,16 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     this->follow_path_command->Initialize();
 }
 
-void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state)
+void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state, bool flipped)
 {
     this->begin_choreo(file_path, trajectory_name, (size_t)0, initial_state);
 }
 
-void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state)
+void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state, bool flipped)
 {
     this->set_motion_state(initial_state);
+
+    this->flipped = flipped;
 
     this->passed_commands.clear();
     frc2::Requirements requirements;
@@ -293,5 +297,5 @@ frc::ChassisSpeeds PathPlannerTrajectoryFollower::get_robot_speeds()
 
 bool PathPlannerTrajectoryFollower::get_should_flip()
 {
-    return false;
+    return this->flipped;
 }
