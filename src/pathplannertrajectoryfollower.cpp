@@ -169,7 +169,6 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
 			{}
         )
     );
-
     this->follow_path_command->Initialize();
 }
 
@@ -215,10 +214,12 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
     set_motion_state(motion_state);
 
-    if (!this->follow_path_command->IsFinished())
+    if (this->follow_path_command->IsFinished())
     {
-        this->follow_path_command->Execute();
+        finished = true;
     }
+
+    this->follow_path_command->Execute();
 
     MotionCommand output;
     output.velocity.x = this->command_speed.vx.value();
@@ -234,10 +235,7 @@ FollowerStatus PathPlannerTrajectoryFollower::status()
 {
     FollowerStatus result;
     result.passed_commands = this->passed_commands;
-    if (this->follow_path_command->IsFinished())
-    {
-        result.finished = true;
-    }
+    result.finished = finished;
     return result;
 }
 

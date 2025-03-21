@@ -55,6 +55,8 @@ namespace yeast_motion
 
             nlohmann::json config_json;
 
+            bool finished = false;
+
             bool flipped = false;
     };
 }
