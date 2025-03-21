@@ -48,6 +48,7 @@ void PathPlannerTrajectoryFollower::register_named_commands(nlohmann::json event
 
 std::shared_ptr<PathPlannerPath> PathPlannerTrajectoryFollower::path_from_trajectory(Trajectory trajectory)
 {
+    NamedCommands::GetNamedCommands().clear();
     register_named_commands(trajectory.to_json()["eventMarkers"]);
 
     std::vector<Waypoint> waypoints;
