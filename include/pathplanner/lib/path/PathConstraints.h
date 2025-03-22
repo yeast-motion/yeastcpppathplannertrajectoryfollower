@@ -25,10 +25,12 @@ public:
 			units::meters_per_second_squared_t maxAccel,
 			units::radians_per_second_t maxAngularVel,
 			units::radians_per_second_squared_t maxAngularAccel,
-			units::volt_t nominalVoltage = 12_V, bool unlimited = false) : m_maxVelocity(
+			units::volt_t nominalVoltage = 12_V, bool unlimited = false,
+		    bool deceleration_valid = false, units::meters_per_second_squared_t maxDeceleration = 0_mps_sq) : m_maxVelocity(
 			maxVel), m_maxAcceleration(maxAccel), m_maxAngularVelocity(
 			maxAngularVel), m_maxAngularAcceleration(maxAngularAccel), m_nominalVoltage(
-			nominalVoltage), m_unlimited(unlimited) {
+			nominalVoltage), m_unlimited(unlimited), m_deceleration_valid(deceleration_valid),
+			m_maxDeceleration(maxDeceleration) {
 	}
 
 	/**
@@ -74,6 +76,17 @@ public:
 	}
 
 	/**
+	 * Get the max linear deceleration
+	 *
+	 * @return Max linear deceleration (M/S^2)
+	 */
+	constexpr units::meters_per_second_squared_t getMaxDeceleration() const {
+		if (m_deceleration_valid)
+			return m_maxDeceleration;
+		return m_maxAcceleration;
+	}
+
+	/**
 	 * Get the max angular velocity
 	 *
 	 * @return Max angular velocity (Rad/S)
@@ -115,12 +128,16 @@ public:
 						m_maxAngularAcceleration()
 								- other.m_maxAngularAcceleration()) < 1E-9
 				&& std::abs(m_nominalVoltage() - other.m_nominalVoltage())
-						< 1E-9 && m_unlimited == other.m_unlimited;
+						< 1E-9 && m_unlimited == other.m_unlimited
+				&& (!m_deceleration_valid || std::abs(m_maxDeceleration() - other.m_maxDeceleration())
+				        < 1E-9);
 	}
 
 private:
 	units::meters_per_second_t m_maxVelocity;
 	units::meters_per_second_squared_t m_maxAcceleration;
+	units::meters_per_second_squared_t m_maxDeceleration = 0_mps_sq;
+	bool m_deceleration_valid = false;
 	units::radians_per_second_t m_maxAngularVelocity;
 	units::radians_per_second_squared_t m_maxAngularAcceleration;
 	units::volt_t m_nominalVoltage;

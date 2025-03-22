@@ -15,7 +15,15 @@ PathConstraints PathConstraints::fromJson(const wpi::json &json) {
 	auto nominalVoltage = units::volt_t(
 			json.at("nominalVoltage").get<double>());
 	bool unlimited = json.at("unlimited").get<bool>();
+	units::meters_per_second_squared_t maxDeceleration;
+	bool deceleration_valid = false;
+	if (json.contains("maxDeceleration"))
+	{
+		maxDeceleration = units::meters_per_second_squared_t(
+			json.at("maxDeceleration").get<double>());
+		deceleration_valid = true;
+	}
 
 	return PathConstraints(maxVel, maxAccel, maxAngVel, maxAngAccel,
-			nominalVoltage, unlimited);
+			nominalVoltage, unlimited, deceleration_valid, maxDeceleration);
 }

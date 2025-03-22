@@ -9,6 +9,8 @@
 #include <units/force.h>
 #include <units/torque.h>
 
+#include <iostream>
+
 using namespace pathplanner;
 
 PathPlannerTrajectory::PathPlannerTrajectory(
@@ -564,11 +566,11 @@ void PathPlannerTrajectory::reverseAccelPass(
 								/ config.MOI)() }, -maxAngAccel), maxAngAccel);
 
 		frc::Translation2d accelVec = linearForceVec / config.mass();
-		units::meters_per_second_squared_t maxAccel =
-				state.constraints.getMaxAcceleration();
+		units::meters_per_second_squared_t maxDecel =
+				state.constraints.getMaxDeceleration();
 		units::meters_per_second_squared_t accel { accelVec.Norm()() };
-		if (accel > maxAccel) {
-			accelVec = accelVec * (maxAccel() / accel());
+		if (accel > maxDecel) {
+			accelVec = accelVec * (maxDecel() / accel());
 		}
 
 		frc::ChassisSpeeds chassisAccel =
