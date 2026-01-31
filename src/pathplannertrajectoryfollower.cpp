@@ -141,6 +141,11 @@ void PathPlannerTrajectoryFollower::set_config(nlohmann::json config)
     this->config_json = config;
 }
 
+void PathPlannerTrajectoryFollower::set_follower_config(nlohmann::json config)
+{
+    this->follower_config_json = config;
+}
+
 void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState initial_state, bool flipped)
 {
     this->set_motion_state(initial_state);
@@ -151,7 +156,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     frc2::Requirements requirements;
 
     path = path_from_trajectory(trajectory);
-    controller = controller_from_config(config_json);
+    controller = controller_from_config(follower_config_json);
 
     this->follow_path_command.release();
     this->follow_path_command.reset(nullptr);
