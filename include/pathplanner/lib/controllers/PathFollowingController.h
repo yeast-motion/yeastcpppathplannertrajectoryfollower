@@ -39,6 +39,13 @@ public:
 	virtual units::meter_t getPositionalError() = 0;
 
 	/**
+	 * Get the current positional error between the robot's actual and target positions
+	 *
+	 * @return Positional error, in meters
+	 */
+	virtual frc::Translation2d getTranslationalError() = 0;
+
+	/**
 	 * Is this controller for holonomic drivetrains? Used to handle some differences in functionality
 	 * in the path following command.
 	 *

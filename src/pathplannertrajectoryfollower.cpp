@@ -240,8 +240,8 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
     output.velocity.x = this->command_speed.vx.value();
     output.velocity.y = this->command_speed.vy.value();
     output.velocity.omega = this->command_speed.omega.value();
-    // output.translation.x = this->controller->getTranslationalError().X().value();
-    // output.translation.y = this->controller->getTranslationalError().Y().value();
+    output.translation.x = this->controller->getTranslationalError().X().value();
+    output.translation.y = this->controller->getTranslationalError().Y().value();
 
     return output;
 }

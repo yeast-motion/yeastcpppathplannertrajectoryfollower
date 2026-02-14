@@ -57,6 +57,15 @@ public:
 	}
 
 	/**
+	 * Get the current positional error between the robot's actual and target positions
+	 *
+	 * @return Positional error, in meters
+	 */
+	inline frc::Translation2d getTranslationalError() override {
+        return m_translationError;
+    }
+
+	/**
 	 * Calculates the next output of the holonomic drive controller
 	 *
 	 * @param currentPose The current pose

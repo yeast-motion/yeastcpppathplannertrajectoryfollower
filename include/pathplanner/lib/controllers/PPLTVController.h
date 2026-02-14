@@ -46,6 +46,7 @@ public:
 			const PathPlannerTrajectoryState &targetState) override {
 		m_lastError = currentPose.Translation().Distance(
 				targetState.pose.Translation());
+        m_translationError = currentPose.Translation();
 
 		return Calculate(currentPose, targetState.pose,
 				targetState.linearVelocity, targetState.fieldSpeeds.omega);
@@ -61,6 +62,15 @@ public:
 	}
 
 	/**
+	 * Get the current positional error between the robot's actual and target positions
+	 *
+	 * @return Positional error, in meters
+	 */
+	inline frc::Translation2d getTranslationalError() override {
+        return m_translationError;
+    }
+
+	/**
 	 * Is this controller for holonomic drivetrains? Used to handle some differences in functionality
 	 * in the path following command.
 	 *
@@ -72,5 +82,6 @@ public:
 
 private:
 	units::meter_t m_lastError;
+    frc::Translation2d m_translationError;
 };
 }
