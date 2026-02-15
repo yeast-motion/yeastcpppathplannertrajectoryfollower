@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <chrono>
 
 
 #include "yeastcpp/components/follower.hpp"
@@ -56,6 +57,8 @@ namespace yeast_motion
 
             nlohmann::json config_json;
             nlohmann::json follower_config_json;
+
+            std::chrono::time_point<std::chrono::system_clock> last_time;
 
             bool finished = false;
 

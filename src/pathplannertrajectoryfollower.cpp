@@ -175,6 +175,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
         )
     );
     this->follow_path_command->Initialize();
+    this->last_time = std::chrono::system_clock::now();
 }
 
 void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state, bool flipped)
@@ -184,6 +185,7 @@ void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::str
     (void) initial_state;
     (void) flipped;
     // this->begin_choreo(file_path, trajectory_name, (size_t)0, initial_state);
+    // last_time = std::chrono<:system_clock>::now()
 }
 
 void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state, bool flipped)
@@ -222,12 +224,15 @@ void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::str
     //     )
     // );
 
+    // last_time = std::chrono<:system_clock>::now()
     // this->follow_path_command->Initialize();
 }
 
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
     set_motion_state(motion_state);
+    float dt = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_time).count();
+    last_time = std::chrono::system_clock::now();
 
     if (this->follow_path_command->IsFinished())
     {
@@ -237,11 +242,20 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
     this->follow_path_command->Execute();
 
     MotionCommand output;
+
     output.velocity.x = this->command_speed.vx.value();
     output.velocity.y = this->command_speed.vy.value();
     output.velocity.omega = this->command_speed.omega.value();
+    output.velocity_valid = true;
+
     output.translation.x = this->controller->getTranslationalError().X().value();
     output.translation.y = this->controller->getTranslationalError().Y().value();
+    output.translation_valid = true;
+
+    output.acceleration.x = (this->command_speed.vx.value() - motion_state.measurement.velocity.x) / dt;
+    output.acceleration.y = (this->command_speed.vy.value() - motion_state.measurement.velocity.y) / dt;
+    output.acceleration.omega = (this->command_speed.omega.value() - motion_state.measurement.velocity.omega) / dt;
+    output.acceleration_valid = true;
 
     return output;
 }
