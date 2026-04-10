@@ -158,8 +158,6 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     path = path_from_trajectory(trajectory);
     controller = controller_from_config(follower_config_json);
 
-    this->follow_path_command.release();
-    this->follow_path_command.reset(nullptr);
     this->follow_path_command.reset
     (
         new FollowPathCommand
@@ -176,6 +174,7 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
     );
     this->follow_path_command->Initialize();
     this->last_time = std::chrono::system_clock::now();
+    this->finished = false;
 }
 
 void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state, bool flipped)
