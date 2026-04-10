@@ -15,25 +15,37 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(wpilib REQUIRED)
 find_package(wpilibNewCommands REQUIRED)
 
-file(GLOB_RECURSE SOURCES
-    "*.cpp"
-    "*.c"
+# Separate yeast sources from vendored pathplanner sources
+file(GLOB YEAST_SOURCES
+    "src/*.cpp"
 )
 
-file(GLOB_RECURSE HEADERS
-    "*.hpp"
-    "*.h"
+file(GLOB_RECURSE PATHPLANNER_SOURCES
+    "src/pathplanner/*.cpp"
 )
 
 # Add the library source files
 add_library(${PROJECT_NAME}
-    ${SOURCES}
+    ${YEAST_SOURCES}
+    ${PATHPLANNER_SOURCES}
 )
 
-# Specify include directories for the library (if needed)
+# Disable warnings on vendored pathplanner source files
+set_source_files_properties(${PATHPLANNER_SOURCES} PROPERTIES
+    COMPILE_OPTIONS "-w"
+)
+
+# Treat warnings as errors for yeast source files
+set_source_files_properties(${YEAST_SOURCES} PROPERTIES
+    COMPILE_OPTIONS "-Werror"
+)
+
+# Yeast includes are PUBLIC, pathplanner headers are SYSTEM to suppress warnings
 target_include_directories(${PROJECT_NAME} PUBLIC
-    include
     ../yeastcpp/include
+)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+    include
 )
 
 target_link_libraries(${PROJECT_NAME}
