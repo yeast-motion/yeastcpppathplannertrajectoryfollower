@@ -48,6 +48,7 @@ namespace yeast_motion
             std::shared_ptr<pathplanner::PathFollowingController> controller;
 
             frc::ChassisSpeeds command_speed;
+            frc::ChassisSpeeds prev_command_speed;
             pathplanner::DriveFeedforwards command_feed_forwards;
 
             frc::Pose2d robot_pose;

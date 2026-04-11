@@ -246,7 +246,7 @@ void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::str
 MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
 {
     set_motion_state(motion_state);
-    float dt = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - last_time).count();
+    float dt_s = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - last_time).count() * 1.0e-6f;
     last_time = std::chrono::system_clock::now();
 
     if (this->follow_path_command->IsFinished())
@@ -267,10 +267,52 @@ MotionCommand PathPlannerTrajectoryFollower::follow(MotionState motion_state)
     output.translation.y = this->controller->getTranslationalError().Y().value();
     output.translation_valid = true;
 
-    output.acceleration.x = (this->command_speed.vx.value() - motion_state.measurement.velocity.x) / dt;
-    output.acceleration.y = (this->command_speed.vy.value() - motion_state.measurement.velocity.y) / dt;
-    output.acceleration.omega = (this->command_speed.omega.value() - motion_state.measurement.velocity.omega) / dt;
-    output.acceleration_valid = true;
+    // Use PathPlanner's trajectory-planned per-module accelerations to compute
+    // a chassis-level acceleration estimate. This is more accurate than numerical
+    // differentiation and avoids the noise/lag of using measured velocity.
+    if (!command_feed_forwards.accelerations.empty())
+    {
+        // Average the per-module accelerations to get a scalar chassis acceleration.
+        // Then project it along the current velocity direction to get x/y components.
+        double avg_accel = 0.0;
+        for (const auto& a : command_feed_forwards.accelerations)
+        {
+            avg_accel += a.value();
+        }
+        avg_accel /= command_feed_forwards.accelerations.size();
+
+        double vx = this->command_speed.vx.value();
+        double vy = this->command_speed.vy.value();
+        double speed = std::sqrt(vx * vx + vy * vy);
+        if (speed > 0.001)
+        {
+            output.acceleration.x = avg_accel * (vx / speed);
+            output.acceleration.y = avg_accel * (vy / speed);
+        }
+        else
+        {
+            output.acceleration.x = 0.0;
+            output.acceleration.y = 0.0;
+        }
+        // Omega acceleration from command velocity change (no measurement latency)
+        output.acceleration.omega = (dt_s > 0.001f)
+            ? (this->command_speed.omega.value() - this->prev_command_speed.omega.value()) / dt_s
+            : 0.0;
+        output.acceleration_valid = true;
+    }
+    else
+    {
+        // Fallback: differentiate commanded velocity between frames (no sensor latency)
+        if (dt_s > 0.001f)
+        {
+            output.acceleration.x = (this->command_speed.vx.value() - this->prev_command_speed.vx.value()) / dt_s;
+            output.acceleration.y = (this->command_speed.vy.value() - this->prev_command_speed.vy.value()) / dt_s;
+            output.acceleration.omega = (this->command_speed.omega.value() - this->prev_command_speed.omega.value()) / dt_s;
+        }
+        output.acceleration_valid = true;
+    }
+
+    this->prev_command_speed = this->command_speed;
 
     return output;
 }
