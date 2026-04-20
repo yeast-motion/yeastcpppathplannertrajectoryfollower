@@ -359,6 +359,16 @@ private:
 		return waypoints;
 	}
 
+public:
+	/**
+	 * Load a Choreo trajectory from an explicit file path and insert it into the choreo path cache
+	 * under the given trajectory name. Used when the .traj files live outside the WPILib deploy
+	 * directory (e.g. a flat robot-deploy layout with no /choreo subfolder).
+	 */
+	static void loadChoreoTrajectoryIntoCache(std::string trajectoryName,
+			std::string filePath);
+
+private:
 	static void loadChoreoTrajectoryIntoCache(std::string trajectoryName);
 
 	void precalcValues();

@@ -179,13 +179,16 @@ void PathPlannerTrajectoryFollower::begin(Trajectory trajectory, MotionState ini
 
 void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, MotionState initial_state, bool flipped)
 {
-    (void) file_path;
     this->set_motion_state(initial_state);
 
     this->flipped = flipped;
 
     this->passed_commands.clear();
 
+    if (!file_path.empty())
+    {
+        PathPlannerPath::loadChoreoTrajectoryIntoCache(trajectory_name, file_path);
+    }
     path = PathPlannerPath::fromChoreoTrajectory(trajectory_name);
     controller = controller_from_config(follower_config_json);
 
@@ -212,13 +215,16 @@ void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::str
 
 void PathPlannerTrajectoryFollower::begin_choreo(std::string file_path, std::string trajectory_name, size_t split_index, MotionState initial_state, bool flipped)
 {
-    (void) file_path;
     this->set_motion_state(initial_state);
 
     this->flipped = flipped;
 
     this->passed_commands.clear();
 
+    if (!file_path.empty())
+    {
+        PathPlannerPath::loadChoreoTrajectoryIntoCache(trajectory_name, file_path);
+    }
     path = PathPlannerPath::fromChoreoTrajectory(trajectory_name, split_index);
     controller = controller_from_config(follower_config_json);
 

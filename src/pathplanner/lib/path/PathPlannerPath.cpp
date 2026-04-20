@@ -146,7 +146,14 @@ void PathPlannerPath::loadChoreoTrajectoryIntoCache(
 		std::string trajectoryName) {
 	const std::string filePath = frc::filesystem::GetDeployDirectory()
 			+ "/choreo/" + trajectoryName + ".traj";
+	loadChoreoTrajectoryIntoCache(trajectoryName, filePath);
+}
 
+void PathPlannerPath::loadChoreoTrajectoryIntoCache(
+		std::string trajectoryName, std::string filePath) {
+	if (PathPlannerPath::getChoreoPathCache().contains(trajectoryName)) {
+		return;
+	}
 	auto fileBuffer = wpi::MemoryBuffer::GetFile(filePath);
 
 	if (!fileBuffer) {
